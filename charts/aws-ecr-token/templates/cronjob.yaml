@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Values.cronjob.name | default "update-ecr-token-secret" }}
+  namespace: default
+spec:
+  schedule: {{ .Values.cronjob.schedule }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: {{ include "aws-ecr-token.serviceAccountName" . }}-sa
+          containers:
+            - name: update-ecr-secret
+              image: {{ .Values.cronjob.image }}
+              env:
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.cronjob.existingSecret }}
+                      key: {{ .Values.cronjob.accessKeyIdkey }}
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.cronjob.existingSecret }}
+                      key: {{ .Values.cronjob.secretAccssKey }}
+                - name: AWS_DEFAULT_REGION
+                  value: {{ .Values.cronjob.region }}
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  set -e
+                  # Get ECR login token
+                  TOKEN=$(aws ecr get-authorization-token --output text --query authorizationData[].authorizationToken | base64 -d | cut -d: -f2)
+                  
+                  # Create a new Kubernetes secret with the ECR token
+                  kubectl create secret docker-registry {{ .Values.cronjob.secretname }} \
+                    --docker-server=https://{{ .Values.cronjob.accountid }}.dkr.ecr.{{ .Values.cronjob.region }}.amazonaws.com \
+                    --docker-username=AWS \
+                    --docker-password=$TOKEN \
+                    --dry-run=client -o yaml | kubectl apply -f -
+          restartPolicy: OnFailure

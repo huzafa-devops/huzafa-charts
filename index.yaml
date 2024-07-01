@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  aws-ecr-token:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2024-07-01T18:18:58.315921+02:00"
+    description: A Helm chart for for updating ecr token secret in kubernetes
+    digest: 50c47fd098340e2b77632bc6684a7e2727f5ea897a14156260cb61a40f2bb49a
+    name: aws-ecr-token
+    type: application
+    urls:
+    - https://huzafa-devops.github.io/huzafa-charts/aws-ecr-token-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-07-01T18:18:58.315185+02:00"

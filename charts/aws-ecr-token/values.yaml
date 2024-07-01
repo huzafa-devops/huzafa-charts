@@ -1,0 +1,49 @@
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # labels to add to the service account
+  labels:
+    label1: value1
+  # Annotations to add to the service account
+  annotations:
+    annotation1: anoot-value-1
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+  # The namespac of the service account to use, if not provided will use default namespace.
+  namespace: ""
+
+cronjob:
+  # The name of the service account to use.
+  name: ""
+  # Cronjob schedule, default is run every hour
+  schedule: "0 * * * *" 
+  # image name
+  image: "huzafach/aws-cli-k8:1.0.0"
+  # AWS region name
+  region: "eu-central-1"
+  # Name of the ecr token secret name
+  secretname: "ecr-token-secret"
+  # AWS project account id 
+  accountid: "952472372085"
+  ## @param cronjob.existingSecret Existing secret containing aws access_key_id and access_secret_id
+  existingSecret: "aws-creds"
+
+  accessKeyIdkey: "ACCESS_KEY_ID"
+  secretAccssKey: "ACCESS_SECRET_KEY"
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
